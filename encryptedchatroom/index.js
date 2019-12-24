@@ -4,6 +4,8 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 const records = require('./record.js');
 
+app.use(express.static(__dirname));
+
 // add online people count
 let onlineCount = 0;
 // if connected
@@ -36,10 +38,11 @@ io.on('connection', (socket) => {
 
 records.on("new_message", (msg)=>{
     io.emit("msg", msg);
-})
+});
 
-server.listen(8080, () => {
+server.listen(3003, () => {
     console.log("Server Started. http://localhost:8080");
 });
+
 // __dirname will return exeFile's absolute path, __filename=__dirname+exeFile
 app.get('/', (req, res)=>{res.sendFile(__dirname + '/views/index.html');});

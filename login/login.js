@@ -17,7 +17,7 @@ var connection = mysql.createConnection({
 	database : 'nodelogin'
 });
 
-// chect if connect to DB successfully
+// check if connect to DB successfully
 connection.connect(function(err) {
 	if (err) {
 		console.log('connecting error');
@@ -47,7 +47,7 @@ app.get('/', function(request, response) {
 	response.sendFile(path.join(__dirname + '/views/login.html'));
 });
 
-// 
+// login response
 app.post('/auth', function(request, response) {
 	var username = request.body.username;
 	var password = request.body.password;
@@ -76,21 +76,49 @@ app.get('/signup', function(request, response) {
 // Sign Up                              //
 //////////////////////////////////////////
 
+// go to login page
 app.get('/login', function(request, response) {
 	response.sendFile(path.join(__dirname + '/views/login.html'));
+});
+
+// add new user to DB and back to login page
+app.post('/login',function (req,res) {
+	var name=req.body.username;
+	var pwd=req.body.password;
+	var email=req.body.email;
+	var user={username:name,password:pwd,email:email};
+	connection.query('SELECT * FROM accounts WHERE username = ?',[name],function(error, results, fields) {
+		if (results.length > 0){
+			res.send("The username is already been used.");
+			console.log('duplicate username');
+		}
+		else{	
+			connection.query('insert into accounts set ?',user,function (err,rs) {
+			if (err) throw err;
+			console.log('ok');
+			res.sendFile(path.join(__dirname + '/views/login.html'));
+		});
+		}
+	});
 });
 
 ///////////////////////////////////////////
 // ChatRoom                             //
 //////////////////////////////////////////
 
-app.post('/chatroom', function(request, response) {
+// go to chatroom page
+app.get('/chatroom', function(request, response) {
 	if (request.session.loggedin) {
-		response.redirect('http://c4d24b75.ngrok.io');
+		// response.redirect('http://7577de9e.ngrok.io');
+		response.sendFile(path.join(__dirname + './../encryptedchatroom/views/index.html'));
 	} else {
 		response.send('Please login to view this page!');
 	}
 });
+
+///////////////////////////////////////////
+// Start server                         //
+//////////////////////////////////////////
 
 app.listen(3003, ()=> {
 	console.log("Server Started. http://localhost:3003");

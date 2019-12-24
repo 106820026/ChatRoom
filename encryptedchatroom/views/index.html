@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="https://i.imgur.com/sXEA0Wq.png">
+    <!-- <link rel="stylesheet" type="text/css" href="../css/index.css"> -->
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Tomorrow&display=swap">
     <title>My Chatroom</title>
     <script src="/socket.io/socket.io.js"></script>
@@ -53,7 +54,7 @@
             border: 1px solid red;
         }
 
-        #logInOut {
+        #logout {
             text-align: right;
             margin-right: 10px;
         }
@@ -107,10 +108,8 @@
     </style>
 </head>
 <body style="background-image: url('https://i.imgur.com/QmCYgKG.png'); height:320px">
-    <div id='logInOut'>
-        <a href="https://www.facebook.com/">Log in</a>
-        <a> | </a>
-        <a href="https://www.youtube.com/?gl=TW&hl=zh-tw">Log out</a>
+    <div id='logout'>
+        <a href="../../login" onClick="alert('Log out successfully!')">Log out</a>
     </div>
     <div id="container">
         <div id="status-box">Server: <span id="status">-</span> / <span id="online">0</span> online.</div>
