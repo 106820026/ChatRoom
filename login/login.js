@@ -4,6 +4,9 @@ var app = express();
 var session = require('express-session');
 var bodyParser = require('body-parser');
 var path = require('path');
+const crypto = require('crypto');
+const server = require('http').Server(app);
+const io = require('socket.io')(server);
 
 ///////////////////////////////////////////
 // DataBase                             //
@@ -39,6 +42,15 @@ app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 
 ///////////////////////////////////////////
+// Encrypt                              //
+//////////////////////////////////////////
+
+//encrypt
+function md5 (text) {
+	return crypto.createHash('md5').update(text).digest('hex');
+};
+
+///////////////////////////////////////////
 // Login                                //
 //////////////////////////////////////////
 
@@ -52,10 +64,11 @@ app.post('/auth', function(request, response) {
 	var username = request.body.username;
 	var password = request.body.password;
 	if (username && password) {
-		connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, password], function(error, results, fields) {
+		connection.query('SELECT * FROM accounts WHERE username = ? AND password = ?', [username, md5(password)], function(error, results, fields) {
 			if (results.length > 0) {
 				request.session.loggedin = true;
 				request.session.username = username;
+				currentUser = username;
 				response.redirect('/chatroom');
 			} else {
 				response.send('Incorrect Username and/or Password!');
@@ -68,6 +81,7 @@ app.post('/auth', function(request, response) {
 	}
 });
 
+// go to sign up page
 app.get('/signup', function(request, response) {
 	response.sendFile(path.join(__dirname + '/views/signup.html'));
 });
@@ -86,7 +100,7 @@ app.post('/login',function (req,res) {
 	var name=req.body.username;
 	var pwd=req.body.password;
 	var email=req.body.email;
-	var user={username:name,password:pwd,email:email};
+	var user={username:name,password:md5(pwd),email:email};
 	connection.query('SELECT * FROM accounts WHERE username = ?',[name],function(error, results, fields) {
 		if (results.length > 0){
 			res.send("The username is already been used.");
@@ -109,16 +123,26 @@ app.post('/login',function (req,res) {
 // go to chatroom page
 app.get('/chatroom', function(request, response) {
 	if (request.session.loggedin) {
-		// response.redirect('http://7577de9e.ngrok.io');
+		// response.redirect('http://dfdf2937.ngrok.io');
 		response.sendFile(path.join(__dirname + './../encryptedchatroom/views/index.html'));
 	} else {
 		response.send('Please login to view this page!');
 	}
 });
 
+// logout and destroy session
+app.get('/logout', (req, res) => {
+	req.session.destroy();
+	return res.redirect('/');
+});
+
 ///////////////////////////////////////////
 // Start server                         //
 //////////////////////////////////////////
+
+io.on('connection', (socket) => {
+    
+});
 
 app.listen(3003, ()=> {
 	console.log("Server Started. http://localhost:3003");
