@@ -9,10 +9,6 @@ const crypto = require('crypto');
 var oneSay;
 //被動方接受主動方傳過來的資料進行計算，產生握手資料和最終的祕鑰
 var twoGetSay;
-//主動方接收到被動方傳來的資料進行計算得到最終祕鑰
-var oneSecret=dhOneGet(twoGetSay[0],oneSay[1]);
-//被動方的祕鑰早已產生了直接讀取
-var twoSecret=twoGetSay[1];
 
 app.use(express.static(__dirname));
 
@@ -42,17 +38,21 @@ io.on('connection', (socket) => {
     socket.on('send', (msg) => {
       // if the length of msg less than 2, return
         if (Object.keys(msg).length < 2) return;
+        oneSay=dhOneSay();
+        twoGetSay=dhTwoGetSay(oneSay[0]);
+        var oneSecret=dhOneGet(twoGetSay[0],oneSay[1]);
+        console.log("one secret : "+oneSecret);
+        msg.msg = aesEncode(msg.msg, oneSecret);
+        console.log("inside text : "+msg.msg);
         records.push(msg);
-        console.log("hi");
     });
 });
 
 records.on("new_message", (msg)=>{
-    // //主動方自己產生資料
-    // oneSay=dhOneSay();
-    // //被動方接受主動方傳過來的資料進行計算，產生握手資料和最終的祕鑰
-    // twoGetSay=dhTwoGetSay(oneSay[0]);
-    // msg = 
+    console.log("outside text : "+msg.msg);
+    var twoSecret=twoGetSay[1];
+    console.log("two secret : "+twoSecret);
+    msg.msg = aesDecode(msg.msg, twoSecret);
     io.emit("msg", msg);
 });
 

@@ -123,7 +123,7 @@ app.post('/login',function (req,res) {
 // go to chatroom page
 app.get('/chatroom', function(request, response) {
 	if (request.session.loggedin) {
-		// response.redirect('http://dfdf2937.ngrok.io');
+		// response.redirect('http://203acb9b.ngrok.io');
 		response.sendFile(path.join(__dirname + './../encryptedchatroom/views/index.html'));
 	} else {
 		response.send('Please login to view this page!');
