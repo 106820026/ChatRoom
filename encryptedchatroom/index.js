@@ -9,6 +9,7 @@ const crypto = require('crypto');
 var oneSay;
 //被動方接受主動方傳過來的資料進行計算，產生握手資料和最終的祕鑰
 var twoGetSay;
+var encrypted_message;
 
 app.use(express.static(__dirname));
 
@@ -41,19 +42,16 @@ io.on('connection', (socket) => {
         oneSay=dhOneSay();
         twoGetSay=dhTwoGetSay(oneSay[0]);
         var oneSecret=dhOneGet(twoGetSay[0],oneSay[1]);
-        console.log("one secret : "+oneSecret);
         msg.msg = aesEncode(msg.msg, oneSecret);
-        console.log("inside text : "+msg.msg);
+        encrypted_message = msg.msg;
         records.push(msg);
     });
 });
 
 records.on("new_message", (msg)=>{
-    console.log("outside text : "+msg.msg);
     var twoSecret=twoGetSay[1];
-    console.log("two secret : "+twoSecret);
     msg.msg = aesDecode(msg.msg, twoSecret);
-    io.emit("msg", msg);
+    io.emit("msg", msg, encrypted_message);
 });
 
 server.listen(8080, () => {

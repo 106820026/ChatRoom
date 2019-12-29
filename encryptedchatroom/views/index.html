@@ -86,13 +86,13 @@
         }
 
         .msg {
-            width: 73%;
+            width: 90%;
             display: inline-block;
             padding: 5px 0 5px 10px;
         }
 
         .msg > span {
-            width: 25%;
+            width: 20%;
             display: inline-block;
         }
 
@@ -196,17 +196,22 @@
                 }
             });
 
-            function addMsgToBox (d) {
+            function addMsgToBox (d, e) {
                 var msgBox = document.createElement("div")
                     msgBox.className = "msg";
                 var nameBox = document.createElement("span");
                     nameBox.className = "name";
+                var encryptedMsgBox = document.createElement("div")
+                    encryptedMsgBox.className = "encryptedMsg";
                 var name = document.createTextNode(d.name);
                 var msg = document.createTextNode(d.msg);
+                var encryptedMsg = document.createTextNode("After Encrypted : " + e);
 
                 nameBox.appendChild(name);
                 msgBox.appendChild(nameBox);
                 msgBox.appendChild(msg);
+                encryptedMsgBox.appendChild(encryptedMsg);
+                msgBox.appendChild(encryptedMsgBox);
                 content.appendChild(msgBox);
 
                 if (content.children.length > max_record) {
