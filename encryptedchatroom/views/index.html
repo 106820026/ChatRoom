@@ -203,15 +203,20 @@
                     nameBox.className = "name";
                 var encryptedMsgBox = document.createElement("div")
                     encryptedMsgBox.className = "encryptedMsg";
+                var decryptedMsgBox = document.createElement("div")
+                    decryptedMsgBox.className = "decryptedMsg";
                 var name = document.createTextNode(d.name);
                 var msg = document.createTextNode(d.msg);
                 var encryptedMsg = document.createTextNode("After Encrypted : " + e);
+                var decryptedMsg = document.createTextNode("After Decrypted : " + d.msg);
 
                 nameBox.appendChild(name);
                 msgBox.appendChild(nameBox);
                 msgBox.appendChild(msg);
                 encryptedMsgBox.appendChild(encryptedMsg);
+                decryptedMsgBox.appendChild(decryptedMsg);
                 msgBox.appendChild(encryptedMsgBox);
+                msgBox.appendChild(decryptedMsgBox);
                 content.appendChild(msgBox);
 
                 if (content.children.length > max_record) {
