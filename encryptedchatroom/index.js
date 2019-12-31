@@ -66,7 +66,7 @@ server.listen(8080, () => {
 function aesEncode(data, key) {
     const cipher = crypto.createCipher('aes192', key);
     var crypted = cipher.update(data, 'utf8', 'hex');
-    crypted += cipher.final('hex');
+    crypted += cipher.final('hex'); //The encoding of the return value.
     return crypted;
   }
 // AES decrypt
@@ -84,9 +84,9 @@ function aesDecode(encrypted, key) {
 // active one negotiate method, 'say' are the three data we want to pass to passive one and 'one' is the data for ourselves
 function dhOneSay() {
     var one = crypto.createDiffieHellman(512);
-    var one_key = one.generateKeys();
+    var one_key = one.generateKeys(); // Generates private and public Diffie-Hellman key values, and returns the public key
     var prime = one.getPrime();
-    var generator = one.getGenerator();
+    var generator = one.getGenerator(); // return the encoding of the return value.
     var say = {
       prime: prime, generator: generator, one_key: one_key
     };
@@ -95,7 +95,7 @@ function dhOneSay() {
 
 // passive one get key 'theSecret', 'two_key' are the three data we want to pass to active one
 function dhTwoGetSay(props) {
-    var two = crypto.createDiffieHellman(props.prime, props.generator);
+    var two = crypto.createDiffieHellman(props.prime, props.generator); // Creates a DiffieHellmankey exchange object using the supplied primeand an optional specific generator
     var two_key = two.generateKeys();
     var theSecret = (two.computeSecret(props.one_key)).toString('hex');
     return [ two_key, theSecret ];
